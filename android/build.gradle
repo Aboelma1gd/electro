@@ -1,0 +1,44 @@
+// build.gradle (Project level)
+
+buildscript {
+    ext.kotlin_version = '1.8.10' // Specify Kotlin version
+    repositories {
+        google()  // Use Google repository
+        mavenCentral()  // Use Maven repository
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:8.3.0" // Add Gradle build settings
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version" // Add Kotlin settings
+    }
+}
+
+allprojects {
+    repositories {
+        google()  // Use Google repository
+        mavenCentral()  // Use Maven repository
+    }
+    
+    configurations.all {
+        resolutionStrategy {
+            force 'com.google.guava:guava:31.1-android'
+            force 'org.bouncycastle:bcprov-jdk15to18:1.68'
+        }
+    }
+}
+
+rootProject.buildDir = "../build" // Set root project build directory path
+
+subprojects {
+    // Customize build directory for each subproject
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+
+subprojects {
+    // Ensure 'app' subproject is evaluated before other projects
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    // Define clean task to delete build directory
+    delete rootProject.buildDir
+}
